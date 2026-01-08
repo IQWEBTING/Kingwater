@@ -1,0 +1,7 @@
+{
+  "name": "ShopCall - LINE WebRTC",
+  "description": "WebRTC Audio Call system integrated with LINE LIFF for customer-to-shop communication.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
