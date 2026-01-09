@@ -150,7 +150,7 @@ const CallInterface: React.FC<CallInterfaceProps> = ({ user, onLogout }) => {
           <div className="absolute inset-0 bg-green-400 rounded-full opacity-20 animate-ping-slow"></div>
         )}
         {status === CallStatus.CONNECTED && (
-          <div className="absolute inset-0 bg-blue-400 rounded-full opacity-10 animate-pulse-slow"></div>
+          <div className="absolute inset-0 bg-green-500 rounded-full opacity-10 animate-pulse-slow"></div>
         )}
 
         {/* Dynamic Center Visual */}
@@ -162,21 +162,24 @@ const CallInterface: React.FC<CallInterfaceProps> = ({ user, onLogout }) => {
           )}
           
           {(status === CallStatus.RINGING || status === CallStatus.CONNECTING) && (
-             <div className="w-48 h-48 bg-white rounded-full shadow-2xl flex items-center justify-center border-4 border-yellow-100">
-                <img 
-                  src={user.pictureUrl} 
-                  className="w-44 h-44 rounded-full object-cover opacity-50 animate-pulse" 
-                  alt="Calling"
-                />
-                <div className="absolute">
-                  <i className="fas fa-phone text-4xl text-yellow-500 animate-bounce"></i>
+             <div className="w-48 h-48 bg-white rounded-full shadow-2xl flex items-center justify-center border-4 border-yellow-100 relative">
+                {/* Changed to Headset Icon for 'Calling Agent' visualization */}
+                <i className="fas fa-headset text-7xl text-gray-300 animate-pulse"></i>
+                
+                {/* Overlay Status Icon */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <i className="fas fa-phone text-3xl text-yellow-500 animate-bounce drop-shadow-md"></i>
                 </div>
              </div>
           )}
 
           {status === CallStatus.CONNECTED && (
-            <div className="w-48 h-48 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-2xl flex items-center justify-center border-4 border-blue-200">
-               <i className="fas fa-user-astronaut text-6xl text-white"></i>
+            <div className="w-48 h-48 bg-white rounded-full shadow-2xl flex items-center justify-center border-4 border-green-400">
+               {/* Changed to Green Headset Icon for Connected state */}
+               <i className="fas fa-headset text-7xl text-green-500 animate-pulse"></i>
+               <div className="absolute bottom-10 right-10">
+                  <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+               </div>
             </div>
           )}
            
@@ -185,13 +188,13 @@ const CallInterface: React.FC<CallInterfaceProps> = ({ user, onLogout }) => {
               <h2 className="text-2xl font-bold text-gray-800">
                 {status === CallStatus.IDLE && "ศูนย์บริการลูกค้า"}
                 {status === CallStatus.CONNECTING && "กำลังเชื่อมต่อ..."}
-                {status === CallStatus.RINGING && "กำลังโทร..."}
+                {status === CallStatus.RINGING && "กำลังติดต่อเจ้าหน้าที่..."}
                 {status === CallStatus.CONNECTED && "สนทนากับเจ้าหน้าที่"}
                 {status === CallStatus.FAILED && "การเชื่อมต่อล้มเหลว"}
               </h2>
               <p className="text-gray-500 mt-1">
                 {status === CallStatus.IDLE && "กดปุ่มด้านล่างเพื่อโทรฟรี"}
-                {status === CallStatus.CONNECTED && "00:00"} 
+                {status === CallStatus.CONNECTED && "Connected"} 
                 {status === CallStatus.FAILED && peerError}
               </p>
            </div>
