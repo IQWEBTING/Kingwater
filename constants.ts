@@ -5,13 +5,12 @@ export const LIFF_ID = '2008852420-gFn29SXB';
 export const ADMIN_PEER_ID = 'shop-admin-001';
 
 // Server Configuration
-// For Vercel deployment, we must use the public PeerJS Cloud because 
-// Vercel does not support hosting a persistent WebSocket server (Node.js).
+// Connecting to your custom Render server: https://kingwatercall.onrender.com
 export const PEER_SERVER_CONFIG = {
-  host: '0.peerjs.com',
-  port: 443,
-  path: '/',
-  secure: true,
+  host: 'kingwatercall.onrender.com', // Domain without https://
+  port: 443,                          // Standard HTTPS port
+  path: '/peerjs',                    // The path defined in your server/index.js
+  secure: true,                       // Render uses HTTPS by default
   debug: 2
 };
 
