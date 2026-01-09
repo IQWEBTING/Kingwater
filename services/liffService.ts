@@ -37,7 +37,8 @@ export const login = () => {
   if (window.liff) {
     // If not logged in, redirect to LINE Login
     if (!window.liff.isLoggedIn()) {
-       window.liff.login();
+       // Explicitly tell LINE to redirect back to the current page (Vercel URL)
+       window.liff.login({ redirectUri: window.location.href });
     }
   }
 };
