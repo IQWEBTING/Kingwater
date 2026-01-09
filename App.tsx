@@ -1,23 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import LoginCard from './components/LoginCard';
 import CallInterface from './components/CallInterface';
-import { initLiff, isLoggedIn, getUserProfile, login, logout, getMockProfile } from './services/liffService';
+import { initLiff, isLoggedIn, getUserProfile, login, logout } from './services/liffService';
 import { UserProfile } from './types';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const initialize = async () => {
-      // Attempt to initialize LIFF
-      const liffInitialized = await initLiff();
-      
-      if (liffInitialized && isLoggedIn()) {
-        const profile = await getUserProfile();
-        setUser(profile);
+      try {
+        setLoading(true);
+        // Attempt to initialize LIFF
+        const liffInitialized = await initLiff();
+        
+        if (!liffInitialized) {
+          setError('ไม่สามารถเชื่อมต่อกับ LINE ได้ (LIFF Init Failed)');
+          setLoading(false);
+          return;
+        }
+
+        // Check if user is logged in
+        if (isLoggedIn()) {
+          const profile = await getUserProfile();
+          if (profile) {
+            setUser(profile);
+          } else {
+            setError('ไม่สามารถดึงข้อมูลโปรไฟล์ได้');
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        setError('เกิดข้อผิดพลาดในระบบ');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     initialize();
@@ -25,18 +44,7 @@ const App: React.FC = () => {
 
   const handleLogin = () => {
     setLoading(true);
-    // In a real environment with valid LIFF ID:
-    login();
-    
-    // For DEMO purposes only: Fallback if LIFF ID is invalid or running on localhost without https
-    // Remove this timeout block in production
-    setTimeout(() => {
-        if (!isLoggedIn()) {
-             console.warn("LIFF not configured or failed. Using Mock Profile.");
-             setUser(getMockProfile());
-             setLoading(false);
-        }
-    }, 1000);
+    login(); // This will redirect the user
   };
 
   return (
@@ -50,7 +58,13 @@ const App: React.FC = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center text-green-600">
              <i className="fas fa-circle-notch fa-spin text-4xl mb-4"></i>
-             <p>Loading System...</p>
+             <p>กำลังเชื่อมต่อระบบ...</p>
+          </div>
+        ) : error ? (
+          <div className="bg-white p-6 rounded-xl shadow-xl text-center max-w-sm mx-auto">
+            <i className="fas fa-exclamation-triangle text-red-500 text-4xl mb-3"></i>
+            <p className="text-gray-700 mb-4">{error}</p>
+            <button onClick={() => window.location.reload()} className="text-blue-500 underline">ลองใหม่อีกครั้ง</button>
           </div>
         ) : !user ? (
           <LoginCard onLogin={handleLogin} loading={loading} />

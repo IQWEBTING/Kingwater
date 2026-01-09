@@ -14,7 +14,14 @@ export const initLiff = async (): Promise<boolean> => {
       console.error('LIFF SDK not loaded');
       return false;
     }
+    
+    // Initialize LIFF
     await window.liff.init({ liffId: LIFF_ID });
+
+    // Handle the case where user opens the app in an external browser but isn't logged in
+    // Note: We don't auto-login here to allow the user to see the landing page first,
+    // but if it's opened inside LINE app, isLoggedIn() will automatically be true.
+    
     return true;
   } catch (error) {
     console.error('LIFF Initialization failed', error);
@@ -28,13 +35,18 @@ export const isLoggedIn = (): boolean => {
 
 export const login = () => {
   if (window.liff) {
-    window.liff.login();
+    // If not logged in, redirect to LINE Login
+    if (!window.liff.isLoggedIn()) {
+       window.liff.login();
+    }
   }
 };
 
 export const logout = () => {
   if (window.liff) {
-    window.liff.logout();
+    if (window.liff.isLoggedIn()) {
+      window.liff.logout();
+    }
     window.location.reload();
   }
 };
@@ -42,6 +54,7 @@ export const logout = () => {
 export const getUserProfile = async (): Promise<UserProfile | null> => {
   try {
     if (!isLoggedIn()) return null;
+    
     const profile = await window.liff.getProfile();
     return {
       userId: profile.userId,
@@ -54,11 +67,3 @@ export const getUserProfile = async (): Promise<UserProfile | null> => {
     return null;
   }
 };
-
-// For development without a real LIFF ID
-export const getMockProfile = (): UserProfile => ({
-  userId: 'mock-user-123',
-  displayName: 'Test Customer',
-  pictureUrl: 'https://picsum.photos/200',
-  statusMessage: 'Ready to order'
-});
